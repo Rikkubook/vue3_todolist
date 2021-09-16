@@ -7,12 +7,13 @@
         <TodoInput @add-todo="addTodo"/>
         <!-- 不可以 @add-todo="addTodo()" 這樣會沒帶到參數 -->
         <TodoFilter class="mt-6"/>
-        <ul  class="mt-4">
+        <ul  class="mt-4 space-y-3">
           <TodoItem
             v-for="todoItem in todos"
             v-bind="todoItem"
             @update-state="upDateState"
             @delect-todo="delectTodo"
+            @update-todo="updateTodo"
           />
           <!-- :todoItem="todoItem" props 同 v-bind:todoItem="todoItem"-->
         </ul>
@@ -66,11 +67,25 @@ export default {
       }
     }
 
-    const delectTodo = () => {
-
+    const delectTodo = id => {
+      // 取得item的排序
+      const todoIndex = todos.value.findIndex(todo => todo.id === id)
+      // 有找到
+      if(todoIndex !== -1){
+        todos.value.splice(todoIndex, 1)
+      }
     }
 
-    return {todos, addTodo, upDateState}
+    const updateTodo = (id, updateContent) => {
+      // 取得item的排序
+      const todoIndex = todos.value.findIndex(todo => todo.id === id)
+      // 有找到
+      if(todoIndex !== -1){
+        todos.value[todoIndex].content = updateContent
+      }
+    }
+
+    return {todos, addTodo, upDateState, delectTodo, updateTodo}
   }
 }
 </script>

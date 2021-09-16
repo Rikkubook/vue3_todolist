@@ -1,15 +1,23 @@
 <template >
-    <li class="bg-white rounded-md flex justify-between mb-3">
+    <li class="bg-white rounded-md flex justify-between">
       <div class="flex items-center px-5 py-2">
         <input type="checkbox" class="mr-2 text-indigo-600 rounded-full w-5 h-5" :checked="isDone" @change="updateState">
          <!-- 不可以 @change="UpdateState()" 這樣會沒帶到參數 -->
         <div
-          class="text-indigo-700"
+          v-if="!isEditing"
+          class="p-1 text-indigo-700"
           :class="isDone? 'line-through':''"
+          @dblclick="editTodo"
         >
           {{ content }}
         </div>
-        <!-- <input type="text" class="p-1 border-none focus:ring-indigo-500 rounded-sm text-indigo-600" v-model="content"> -->
+        <input
+          v-else
+          type="text"
+          class="p-1 border-none focus:ring-indigo-500 rounded-sm text-indigo-600"
+          v-model="contentChange"
+          @keyup.enter="updateTodo"
+        >
       </div>
       <button class="px-5 py-3 text-indigo-300 hover:text-pink-700" @click="delectTodo">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -23,7 +31,7 @@
 import { ref } from 'vue'
 
 export default {
-  emits: ['update-state', 'delect-todo'],
+  emits: ['update-state', 'delect-todo', 'update-todo'],
   props:{
     id: {
       type: Number,
@@ -39,14 +47,27 @@ export default {
     }
   },
   setup (props, {emit}) {
+    const isEditing = ref(false)
+    const contentChange = ref(props.content)
     const updateState = (event) => { //enter會自動觸發form submit
       // console.log(event.target.checked)
       emit('update-state', props.id, event.target.checked)
     }
-    const delectTodo = () =>{
+    
+    const delectTodo = () => {
       emit('delect-todo', props.id)
     }
-    return {updateState, delectTodo}
+
+    const editTodo = () => {
+      isEditing.value = true
+    }
+
+    const updateTodo = () => {
+      emit('update-todo', props.id, contentChange.value)
+      isEditing.value = false
+    }
+
+    return {contentChange, isEditing, updateState, delectTodo, editTodo, updateTodo}
   }
 }
 </script>
