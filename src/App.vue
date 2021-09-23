@@ -39,12 +39,12 @@
 </template>
 
 <script>
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
+
 import TodoInput from './components/TodoInput.vue'
 import TodoFilter from './components/TodoFilter.vue'
 import TodoItem from './components/TodoItem.vue'
 import { computed, ref } from 'vue'
+import { useLocalStorage } from '@vueuse/core'
 
 export default {
   components:{
@@ -53,7 +53,7 @@ export default {
     TodoItem
   },
   setup(){
-    const todos = ref([
+    const todos = useLocalStorage('todos',[
       {
         id: 1,
         content: '學 tialwind',
@@ -75,7 +75,6 @@ export default {
         isDone: false
       })
     }
-
   	const add = () => {
       todos.value.push({
         id: Date.now(),
@@ -92,7 +91,6 @@ export default {
         todos.value[todoIndex].isDone = updateSatus
       }
     }
-
     const delectTodo = (id) => {
       // 取得item的排序
       const todoIndex = todos.value.findIndex(todo => todo.id === id)
@@ -110,7 +108,6 @@ export default {
         todos.value[todoIndex].content = updateContent
       }
     }
-
     const updateFilter = (changefilter) => {
       filter.value = changefilter
     }
