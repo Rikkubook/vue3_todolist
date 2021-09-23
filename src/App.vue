@@ -4,52 +4,35 @@
     <div class="min-h-screen py-20 bg-gradient-to-tr from-indigo-600 to-purple-500 ">
       <h1 class="text-center text-5xl font-bold text-gray-100"> TODOLIST1</h1>
       <div class=" mt-6 bg-indigo-50 max-w-sm mx-auto p-6 rounded-lg  shadow-lg">
-        <TodoInput @add-todo="addTodo"/>
+        <TodoInput
+          @add-todo="addTodo"
+        />
         <!-- 不可以 @add-todo="addTodo()" 這樣會沒帶到參數 -->
-        <TodoFilter class="mt-6"/>
+        <TodoFilter
+          :filter="filter"
+          @update-filter="updateFilter" class="mt-6"
+        />
 
-        <transition-group name="fade" class="mt-4 space-y-3" tag="ul" mode="out-in">
+        <transition-group
+          name="fade"
+          class="mt-4 space-y-3"
+          tag="ul"
+          enter-active-class="transition transform"
+          enter-from-class="opacity-0 scale-90"
+          enter-to-class="opacity-100 scale-100"
+          leave-active-class="transition transform"
+          leave-from-class="opacity-100 scale-100"
+          leave-to-class="opacity-0 scale-90"
+        >
           <TodoItem
-            v-for="todoItem in todos"
+            v-for="todoItem in filteredTodos"
             v-bind="todoItem"
-            @update-state="upDateState"
+            :key="todoItem.id"
+            @update-state="updateState"
             @delect-todo="delectTodo"
             @update-todo="updateTodo"
           />
-          
           <!-- :todoItem="todoItem" props 同 v-bind:todoItem="todoItem"-->
-        </transition-group>
-
-        <div>
-          <button @click="add">Add new Item</button>
-        </div>
-        <transition-group name="fade" mode="out-in"  tag="ul">
-          <li v-for="todoItem in todos" :key="todoItem" class="bg-white rounded-md flex justify-between">
-            <div class="flex items-center px-5 py-2">
-              <input type="checkbox" class="mr-2 text-indigo-600 rounded-full w-5 h-5" :checked="isDone" @change="updateState">
-              <!-- 不可以 @change="UpdateState()" 這樣會沒帶到參數 -->
-              <div
-                v-if="!isEditing"
-                class="p-1 text-indigo-700"
-                :class="isDone? 'line-through':''"
-                @dblclick="editTodo"
-              >
-                {{ content }}
-              </div>
-              <input
-                v-else
-                type="text"
-                class="p-1 border-none focus:ring-indigo-500 rounded-sm text-indigo-600"
-                v-model="contentChange"
-                @keyup.enter="updateTodo"
-              >
-            </div>
-            <button class="px-5 py-3 text-indigo-300 hover:text-pink-700" @click="delectTodo">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 stroke-current" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            </button>
-          </li>
         </transition-group>
       </div>
     </div>
@@ -61,7 +44,7 @@
 import TodoInput from './components/TodoInput.vue'
 import TodoFilter from './components/TodoFilter.vue'
 import TodoItem from './components/TodoItem.vue'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 export default {
   components:{
@@ -101,7 +84,7 @@ export default {
       })
     }
 
-    const upDateState = (id, updateSatus) => {
+    const updateState = (id, updateSatus) => {
       // 取得item的排序
       const todoIndex = todos.value.findIndex(todo => todo.id === id)
       // 有找到
@@ -110,7 +93,7 @@ export default {
       }
     }
 
-    const delectTodo = id => {
+    const delectTodo = (id) => {
       // 取得item的排序
       const todoIndex = todos.value.findIndex(todo => todo.id === id)
       // 有找到
@@ -128,7 +111,21 @@ export default {
       }
     }
 
-    return { items, todos, addTodo, upDateState, delectTodo, updateTodo, add}
+    const updateFilter = (changefilter) => {
+      filter.value = changefilter
+    }
+
+    const filter = ref('all')
+    const filteredTodos = computed(()=>{
+      if (filter.value === 'isDone') {
+        return todos.value.filter(todo => todo.isDone)
+      } else if (filter.value === 'unDone'){
+        return todos.value.filter(todo => !todo.isDone)
+      }
+      return todos.value
+    })
+
+    return { items, todos, addTodo, updateState, delectTodo, updateTodo, add, filter, filteredTodos, updateFilter}
   }
 }
 </script>

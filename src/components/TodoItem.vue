@@ -1,7 +1,7 @@
 <template >
     <li class="bg-white rounded-md flex justify-between">
       <div class="flex items-center px-5 py-2">
-        <input type="checkbox" class="mr-2 text-indigo-600 rounded-full w-5 h-5" :checked="isDone" @change="updateState">
+        <input type="checkbox" class="mr-2 text-indigo-600 rounded-full w-5 h-5 focus:ring-0 focus:ring-offset-0" :checked="isDone" @change="updateState">
          <!-- 不可以 @change="UpdateState()" 這樣會沒帶到參數 -->
         <div
           v-if="!isEditing"
