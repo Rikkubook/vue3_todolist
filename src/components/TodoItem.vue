@@ -17,6 +17,7 @@
           class="p-1 border-none focus:ring-indigo-500 rounded-sm text-indigo-600"
           v-model="contentChange"
           @keyup.enter="updateTodo"
+          @keyup.esc="cancelEdit"
         >
       </div>
       <button class="px-5 py-3 text-indigo-300 hover:text-pink-700" @click="delectTodo">

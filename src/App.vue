@@ -43,8 +43,8 @@
 import TodoInput from './components/TodoInput.vue'
 import TodoFilter from './components/TodoFilter.vue'
 import TodoItem from './components/TodoItem.vue'
-import { computed, ref } from 'vue'
-import { useLocalStorage } from '@vueuse/core'
+import useTodos from './composables/useTodos.js'
+import filerTodos from './composables/filterTodos.js'
 
 export default {
   components:{
@@ -53,76 +53,22 @@ export default {
     TodoItem
   },
   setup(){
-    const todos = useLocalStorage('todos',[
-      {
-        id: 1,
-        content: '學 tialwind',
-        isDone: false
-      },
-      {
-        id: 2,
-        content: '學 Vue',
-        isDone: false
-      }
-    ])
-    const items= ref([])
+    const{
+      todos,
+      addTodo,
+      updateState,
+      delectTodo,
+      updateTodo
+    } = useTodos()
 
-    const addTodo = newTodoText => {
-      console.log(newTodoText)
-      todos.value.push({
-        id: Date.now(),
-        content: newTodoText,
-        isDone: false
-      })
-    }
-  	const add = () => {
-      todos.value.push({
-        id: Date.now(),
-        content: 'erewr',
-        isDone: false
-      })
-    }
+    const{
+      filter,
+      filteredTodos,
+      updateFilter
+    } = filerTodos(todos)
+    // 傳todo使用的
 
-    const updateState = (id, updateSatus) => {
-      // 取得item的排序
-      const todoIndex = todos.value.findIndex(todo => todo.id === id)
-      // 有找到
-      if(todoIndex !== -1){
-        todos.value[todoIndex].isDone = updateSatus
-      }
-    }
-    const delectTodo = (id) => {
-      // 取得item的排序
-      const todoIndex = todos.value.findIndex(todo => todo.id === id)
-      // 有找到
-      if(todoIndex !== -1){
-        todos.value.splice(todoIndex, 1)
-      }
-    }
-
-    const updateTodo = (id, updateContent) => {
-      // 取得item的排序
-      const todoIndex = todos.value.findIndex(todo => todo.id === id)
-      // 有找到
-      if(todoIndex !== -1){
-        todos.value[todoIndex].content = updateContent
-      }
-    }
-    const updateFilter = (changefilter) => {
-      filter.value = changefilter
-    }
-
-    const filter = ref('all')
-    const filteredTodos = computed(()=>{
-      if (filter.value === 'isDone') {
-        return todos.value.filter(todo => todo.isDone)
-      } else if (filter.value === 'unDone'){
-        return todos.value.filter(todo => !todo.isDone)
-      }
-      return todos.value
-    })
-
-    return { items, todos, addTodo, updateState, delectTodo, updateTodo, add, filter, filteredTodos, updateFilter}
+    return { todos, addTodo, updateState, delectTodo, updateTodo, filter, filteredTodos, updateFilter}
   }
 }
 </script>

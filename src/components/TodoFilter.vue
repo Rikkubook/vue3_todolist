@@ -9,15 +9,15 @@
     </button>
     <button
       class="font-semibold"
-      :class="filter==='isDone'?'text-indigo-600':'text-indigo-300'"
-      @click="updateFilter('isDone')"
+      :class="filter==='unDone'?'text-indigo-600':'text-indigo-300'"
+      @click="updateFilter('unDone')"
     >
       未完成
     </button>
     <button
       class="font-semibold"
-      :class="filter==='unDone'?'text-indigo-600':'text-indigo-300'"
-      @click="updateFilter('unDone')"
+      :class="filter==='isDone'?'text-indigo-600':'text-indigo-300'"
+      @click="updateFilter('isDone')"
     >
       已完成
     </button>

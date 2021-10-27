@@ -13,6 +13,7 @@ export default {
   setup (props, {emit}) {
     const newTodo =  ref('')
     const handleAddTodo = () => { //enter會自動觸發form submit
+      if (!newTodo.value) return
       emit('add-todo', newTodo.value)
     }
     return {newTodo, handleAddTodo}
